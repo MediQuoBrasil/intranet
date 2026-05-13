@@ -16,22 +16,20 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-  <!-- ─── Toggle de tema ─── -->
-  <button id="themeToggle" class="theme-toggle" aria-label="Alternar tema">
-    <svg id="iconMoon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-    <svg id="iconSun" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-    </svg>
-  </button>
-
   <!-- ─── Tela de Login ─── -->
   <section id="loginSection" class="login-shell" style="display:none">
     <div class="login-card">
+      <button class="theme-toggle theme-toggle-corner" aria-label="Alternar tema" type="button">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+        </svg>
+      </button>
       <h1 class="login-title">Intranet</h1>
       <p class="login-sub">Entre com sua conta corporativa Google para continuar.</p>
       <div id="googleSignIn" class="login-google"></div>
@@ -45,7 +43,20 @@
     <!-- ── Sidebar de setores ── -->
     <aside id="sidebar" class="sidebar" aria-label="Navegação por setor">
       <div class="sidebar-header">
-        <h2 class="sidebar-title">Intranet</h2>
+        <div class="sidebar-header-top">
+          <h2 class="sidebar-title">Intranet</h2>
+          <button class="theme-toggle theme-toggle-inline" aria-label="Alternar tema" type="button">
+            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+          </button>
+        </div>
         <p id="userName" class="sidebar-user"></p>
       </div>
       <nav id="sectorNav" class="sector-nav"></nav>
@@ -116,28 +127,28 @@
         </div>
 
         <!-- Permissões: Setores -->
-        <fieldset class="field-group permissions-group">
-          <legend class="field-label">Quem poderá ver?</legend>
-          <label class="check-item">
+        <div class="field-group permissions-group" role="group" aria-labelledby="lbl-quem-pode-ver">
+          <p id="lbl-quem-pode-ver" class="field-label permissions-title">Quem poderá ver?</p>
+          <label class="check-item check-item-master">
             <input id="fTodosSetores" type="checkbox" />
             <span>Todos setores</span>
           </label>
           <div id="fSetoresList" class="check-grid"></div>
-        </fieldset>
+        </div>
 
         <!-- Permissões: Lideranças -->
-        <fieldset class="field-group permissions-group">
-          <legend class="field-label">Quais lideranças podem visualizar?</legend>
-          <label class="check-item">
+        <div class="field-group permissions-group" role="group" aria-labelledby="lbl-liderancas">
+          <p id="lbl-liderancas" class="field-label permissions-title">Quais lideranças podem visualizar?</p>
+          <label class="check-item check-item-master">
             <input id="fTodasLiderancas" type="checkbox" />
             <span>Todas lideranças</span>
           </label>
           <div id="fLiderancasList" class="check-grid"></div>
-        </fieldset>
+        </div>
 
         <!-- Permissões: Cargos especiais -->
-        <fieldset class="field-group permissions-group">
-          <legend class="field-label">O PO ou Analista de dados poderá visualizar?</legend>
+        <div class="field-group permissions-group" role="group" aria-labelledby="lbl-cargos">
+          <p id="lbl-cargos" class="field-label permissions-title">O PO ou Analista de dados poderá visualizar?</p>
           <label class="check-item">
             <input id="fVerPO" type="checkbox" />
             <span>Product Owner (Henrique)</span>
@@ -146,11 +157,11 @@
             <input id="fVerAnalista" type="checkbox" />
             <span>Analista de dados (Marlon)</span>
           </label>
-        </fieldset>
+        </div>
 
         <!-- Sigilo de saúde (condicional) -->
-        <fieldset class="field-group permissions-group" id="fSigiloWrap" style="display:none">
-          <legend class="field-label">Este conteúdo só pode ser visto por profissionais de saúde?</legend>
+        <div class="field-group permissions-group" role="group" aria-labelledby="lbl-sigilo" id="fSigiloWrap" style="display:none">
+          <p id="lbl-sigilo" class="field-label permissions-title">Este conteúdo só pode ser visto por profissionais de saúde?</p>
           <label class="check-item check-item-sigilo">
             <input id="fSigilo" type="checkbox" />
             <span>Sim, conteúdo com sigilo</span>
@@ -158,7 +169,7 @@
           <p class="field-hint">
             Marcando esta opção, nem a Diretoria terá acesso — apenas profissionais de saúde.
           </p>
-        </fieldset>
+        </div>
 
         <p id="adminError" class="field-error" aria-live="polite"></p>
 
