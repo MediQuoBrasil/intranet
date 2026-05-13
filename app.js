@@ -1,791 +1,868 @@
-/* ═══════════════════════════════════════════════════════════
-   INTRANET — Estilos
-   Reaproveita o sistema do painel de agendamentos:
-     - Variáveis tema escuro/claro
-     - Acento principal: #491e9c
-     - Tipografia Outfit / Nunito Sans
-   Adiciona: app shell com sidebar, sector-nav, breadcrumb,
-             link-cards, formulário admin.
-   ═══════════════════════════════════════════════════════════ */
-
-/* ─── Reset ───────────────────────────────────────────────── */
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ─── Variáveis — Tema Escuro ─────────────────────────────── */
-
-:root,
-[data-theme="dark"] {
-  --color-bg:           #090710;
-  --color-surface:      #13101f;
-  --color-surface-2:    #1a1528;
-  --color-border:       rgba(73, 30, 156, 0.2);
-  --color-border-hover: rgba(73, 30, 156, 0.45);
-  --color-primary:      #491e9c;
-  --color-primary-rgb:  73, 30, 156;
-  --color-primary-soft: #5c2fc4;
-  --color-primary-glow: rgba(73, 30, 156, 0.15);
-  --color-accent:       #8257e6;
-  --color-text:         #e4ddf1;
-  --color-text-muted:   #9688b0;
-  --color-text-dim:     #6e5f8a;
-  --color-danger:       #e54560;
-  --color-danger-soft:  rgba(229, 69, 96, 0.12);
-  --color-success:      #34d399;
-  --color-success-soft: rgba(52, 211, 153, 0.12);
-  --color-warning:      #fbbf24;
-  --color-input-bg:     #0f0c1a;
-  --color-input-border: #2a2240;
-  --color-input-focus:  #491e9c;
-  --shadow-sm:          0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md:          0 4px 16px rgba(0, 0, 0, 0.5);
-  --shadow-glow:        0 0 40px rgba(73, 30, 156, 0.12);
-  --radius-sm:          8px;
-  --radius-md:          14px;
-  --radius-lg:          20px;
-  --font-display:       'Outfit', sans-serif;
-  --font-body:          'Nunito Sans', sans-serif;
-  --sidebar-width:      280px;
-}
-
-/* ─── Variáveis — Tema Claro ──────────────────────────────── */
-
-[data-theme="light"] {
-  --color-bg:           #f4f0fa;
-  --color-surface:      #ffffff;
-  --color-surface-2:    #f0ecf7;
-  --color-border:       rgba(73, 30, 156, 0.12);
-  --color-border-hover: rgba(73, 30, 156, 0.3);
-  --color-primary-glow: rgba(73, 30, 156, 0.06);
-  --color-text:         #1c1230;
-  --color-text-muted:   #5e5077;
-  --color-text-dim:     #8a7da3;
-  --color-danger-soft:  rgba(229, 69, 96, 0.08);
-  --color-success-soft: rgba(52, 211, 153, 0.10);
-  --color-input-bg:     #f8f5ff;
-  --color-input-border: #d4cce6;
-  --shadow-sm:          0 1px 3px rgba(73, 30, 156, 0.06);
-  --shadow-md:          0 4px 20px rgba(73, 30, 156, 0.08);
-  --shadow-glow:        0 0 40px rgba(73, 30, 156, 0.05);
-}
-
-/* ─── Base ────────────────────────────────────────────────── */
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: var(--font-body);
-  background: var(--color-bg);
-  color: var(--color-text);
-  min-height: 100vh;
-  line-height: 1.6;
-  transition: background 0.35s ease, color 0.35s ease;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 600px 400px at 50% 0%, rgba(var(--color-primary-rgb), 0.07), transparent),
-    radial-gradient(ellipse 400px 300px at 80% 80%, rgba(var(--color-primary-rgb), 0.04), transparent);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ─── Toggle de tema ──────────────────────────────────────── */
-
-.theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 100;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.25s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.theme-toggle:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary-soft);
-  transform: scale(1.08);
-}
-
-.theme-icon {
-  width: 18px;
-  height: 18px;
-}
-
-/* ─── Tela de Login ───────────────────────────────────────── */
-
-.login-shell {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.login-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 2.5rem 2rem;
-  text-align: center;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: var(--shadow-glow);
-  animation: fadeSlideUp 0.5s ease both;
-}
-
-.login-title {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-primary-soft));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.login-sub {
-  color: var(--color-text-muted);
-  font-size: 0.92rem;
-  margin: 0.5rem 0 1.75rem;
-}
-
-.login-google {
-  display: flex;
-  justify-content: center;
-}
-
-.login-error {
-  margin-top: 1rem;
-  color: var(--color-danger);
-  font-size: 0.85rem;
-}
-
-/* ─── App Shell (sidebar + content) ───────────────────────── */
-
-.app-shell {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  min-height: 100vh;
-}
-
-.sidebar {
-  border-right: 1px solid var(--color-border);
-  background: var(--color-surface);
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.sidebar-header {
-  padding: 1.5rem 1.25rem 0.75rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.sidebar-title {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-primary-soft));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.sidebar-user {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  margin-top: 0.25rem;
-  word-break: break-word;
-}
-
-.sector-nav {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.75rem 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.sector-item {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.6rem 0.85rem;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.92rem;
-  color: var(--color-text-muted);
-  background: transparent;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  width: 100%;
-}
-
-.sector-item:hover {
-  background: var(--color-primary-glow);
-  color: var(--color-text);
-}
-
-.sector-item.active {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
-  color: #fff;
-  box-shadow: 0 2px 12px rgba(var(--color-primary-rgb), 0.3);
-}
-
-.sidebar-footer {
-  padding: 1rem 1.25rem;
-  border-top: 1px solid var(--color-border);
-}
-
-/* ─── Conteúdo principal ──────────────────────────────────── */
-
-.content {
-  padding: 1.75rem 2rem 3rem;
-  overflow-x: hidden;
-}
-
-.content-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.breadcrumb {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.breadcrumb-current {
-  color: var(--color-text);
-  font-weight: 700;
-}
-
-.breadcrumb-link {
-  color: var(--color-text-muted);
-  cursor: pointer;
-  background: none;
-  border: none;
-  font: inherit;
-  padding: 0;
-}
-
-.breadcrumb-link:hover {
-  color: var(--color-primary-soft);
-}
-
-.breadcrumb-sep {
-  color: var(--color-text-dim);
-}
-
-.content-empty {
-  color: var(--color-text-dim);
-  text-align: center;
-  padding: 4rem 1rem;
-  font-size: 0.95rem;
-}
-
-/* ─── Listas (categorias e botões) ────────────────────────── */
-
-.cat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.cat-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 1.25rem 1.25rem;
-  box-shadow: var(--shadow-sm);
-  cursor: pointer;
-  transition: border-color 0.15s ease, transform 0.15s ease;
-  animation: fadeSlideUp 0.35s ease both;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  text-align: left;
-  width: 100%;
-  font: inherit;
-  color: inherit;
-}
-
-.cat-card:hover {
-  border-color: var(--color-border-hover);
-  transform: translateY(-1px);
-}
-
-.cat-card-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--color-text);
-}
-
-.cat-card-meta {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-}
-
-.cat-card-sigilo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  font-family: var(--font-display);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.18rem 0.55rem;
-  border-radius: 99px;
-  background: rgba(251, 191, 36, 0.12);
-  color: var(--color-warning);
-  width: max-content;
-}
-
-.btn-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 0.85rem;
-  margin-top: 0.5rem;
-}
-
-.btn-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 1rem 1.25rem;
-  box-shadow: var(--shadow-sm);
-  text-decoration: none;
-  color: var(--color-text);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  animation: fadeSlideUp 0.35s ease both;
-}
-
-.btn-card:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary-soft);
-  transform: translateY(-1px);
-}
-
-.btn-card-arrow {
-  color: var(--color-text-dim);
-  flex-shrink: 0;
-}
-
-.btn-card-actions {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
-}
-
-.btn-tiny {
-  font-size: 0.72rem;
-  padding: 0.3rem 0.55rem;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-weight: 600;
-}
-
-.btn-tiny:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary-soft);
-}
-
-.btn-tiny.btn-tiny-danger:hover {
-  border-color: var(--color-danger);
-  color: var(--color-danger);
-}
-
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ─── Botões base (reaproveitados do painel) ──────────────── */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.92rem;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  line-height: 1;
-}
-
-.btn-primary {
-  padding: 0.7rem 1.2rem;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
-  color: #fff;
-  box-shadow: 0 2px 12px rgba(var(--color-primary-rgb), 0.3);
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(var(--color-primary-rgb), 0.45);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-outline {
-  padding: 0.55rem 1rem;
-  background: transparent;
-  color: var(--color-text-muted);
-  border: 1.5px solid var(--color-border);
-}
-
-.btn-outline:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary-soft);
-}
-
-.btn-danger {
-  padding: 0.55rem 1rem;
-  background: var(--color-danger);
-  color: #fff;
-}
-
-.btn-danger:hover { filter: brightness(1.1); }
-
-.btn-sm {
-  font-size: 0.82rem;
-  padding: 0.5rem 0.9rem;
-}
-
-/* ─── Spinner ─────────────────────────────────────────────── */
-
-.spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ─── Formulário Admin ────────────────────────────────────── */
-
-.admin-modal {
-  max-width: 600px;
-  text-align: left;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.admin-form .field-group {
-  margin-bottom: 1.1rem;
-}
-
-.field-label {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 0.4rem;
-}
-
-.field-input {
-  width: 100%;
-  padding: 0.65rem 0.85rem;
-  font-family: var(--font-body);
-  font-size: 0.93rem;
-  color: var(--color-text);
-  background: var(--color-input-bg);
-  border: 1.5px solid var(--color-input-border);
-  border-radius: var(--radius-sm);
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.field-input:focus {
-  border-color: var(--color-input-focus);
-  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
-}
-
-.field-error {
-  display: block;
-  font-size: 0.82rem;
-  color: var(--color-danger);
-  margin: 0.5rem 0;
-  min-height: 1rem;
-}
-
-.field-hint {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  margin-top: 0.35rem;
-  line-height: 1.4;
-}
-
-.permissions-group {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 0.85rem 1rem;
-  background: var(--color-surface-2);
-}
-
-.permissions-group .field-label {
-  font-size: 0.84rem;
-  margin-bottom: 0.55rem;
-}
-
-.check-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 0.4rem 0.85rem;
-}
-
-.check-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.86rem;
-  color: var(--color-text);
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  padding: 0.25rem 0;
-}
-
-.check-item input[type="checkbox"] {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  accent-color: var(--color-primary);
-  cursor: pointer;
-}
-
-.check-item-sigilo {
-  font-weight: 700;
-  color: var(--color-warning);
-}
-
-.tab-toggle {
-  display: flex;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 3px;
-}
-
-.tab-btn {
-  flex: 1;
-  padding: 0.45rem 0.85rem;
-  font-family: var(--font-display);
-  font-size: 0.84rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tab-btn:hover:not(.active) { color: var(--color-text); }
-
-.tab-btn.active {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(var(--color-primary-rgb), 0.3);
-}
-
-/* ─── Modal ───────────────────────────────────────────────── */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  padding: 1rem;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.modal-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem 1.6rem;
-  max-width: 420px;
-  width: 100%;
-  text-align: center;
-  box-shadow: var(--shadow-md);
-  animation: scaleIn 0.25s ease;
-}
-
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-.modal-title {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: var(--color-text);
-}
-
-.modal-text {
-  font-size: 0.88rem;
-  color: var(--color-text-muted);
-  margin-bottom: 1.25rem;
-  line-height: 1.5;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.65rem;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-/* ─── Toast ───────────────────────────────────────────────── */
-
-.toast {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--color-surface-2);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 0.65rem 1.2rem;
-  font-size: 0.85rem;
-  font-family: var(--font-body);
-  box-shadow: var(--shadow-md);
-  z-index: 300;
-  opacity: 0;
-  transition: transform 0.35s ease, opacity 0.35s ease;
-  max-width: 90%;
-  text-align: center;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-.toast.toast-error  { border-color: var(--color-danger);  color: var(--color-danger);  }
-.toast.toast-success { border-color: var(--color-success); color: var(--color-success); }
-
-/* ─── Footer ──────────────────────────────────────────────── */
-
-.footer {
-  position: fixed;
-  bottom: 0.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.72rem;
-  color: var(--color-text-dim);
-  z-index: 50;
-  pointer-events: none;
-}
-
-/* ─── Responsivo ──────────────────────────────────────────── */
-
-@media (max-width: 880px) {
-  .app-shell {
-    grid-template-columns: 1fr;
+/**
+ * ═══════════════════════════════════════════════════════════
+ *  app.js — Frontend da Intranet
+ * ═══════════════════════════════════════════════════════════
+ *
+ *  Responsabilidades:
+ *    - Login com Google Identity Services (GIS)
+ *    - Comunicação com o backend Apps Script via POST text/plain
+ *      (evita preflight CORS)
+ *    - Renderização segura da árvore (textContent, sem innerHTML
+ *      com dado dinâmico)
+ *    - Tema escuro/claro persistente
+ *    - Modal de criação/edição de Categoria e Botão
+ *
+ *  Segurança:
+ *    - Nenhuma decisão de autorização é tomada no cliente.
+ *      Itens não visíveis não chegam aqui; o backend já filtra.
+ *    - URLs externas abrem com rel="noopener noreferrer".
+ *    - Render usa textContent para qualquer dado vindo do
+ *      servidor — sem innerHTML com strings concatenadas.
+ */
+
+(() => {
+  'use strict';
+
+  // ─── Configuração ─────────────────────────────────────────
+
+  /**
+   * @typedef {Object} FrontendConfig
+   * @property {string} GOOGLE_CLIENT_ID  Mesmo Client ID configurado no backend.
+   * @property {string} APPS_SCRIPT_URL   URL `/exec` do deployment do Apps Script.
+   */
+
+  /** @type {FrontendConfig} */
+  const CONFIG = Object.freeze({
+    GOOGLE_CLIENT_ID: '193363983227-d829vfphphr53rgcitao4g0aiics173m.apps.googleusercontent.com',
+    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxwa_F7vQdwnnGZdXgGsuOcFk2bW47t2WzzFBG7Ve9gzjQqdZ2WlrVZYNgn2MjuBRSv/exec',
+  });
+
+  // ─── Enumerações de domínio (mantidas em sincronia com o backend) ─
+
+  /** @type {ReadonlyArray<{code: string, label: string}>} */
+  const SETORES = Object.freeze([
+    { code: 'CS', label: 'CS' },
+    { code: 'Marketing', label: 'Marketing' },
+    { code: 'Tecnologia', label: 'Tecnologia' },
+    { code: 'Administrativo', label: 'Administrativo/financeiro' },
+    { code: 'Comercial', label: 'Comercial' },
+    { code: 'Saude', label: 'Saúde' },
+    { code: 'Juridico', label: 'Jurídico' },
+    { code: 'Diretoria', label: 'Diretoria' },
+  ]);
+
+  /** @type {ReadonlyArray<{code: string, label: string}>} */
+  const LIDERANCAS = Object.freeze([
+    { code: 'Danilo', label: 'Danilo (Marketing)' },
+    { code: 'Idelberto', label: 'Idelberto (Tecnologia)' },
+    { code: 'Simao', label: 'Simão (CS)' },
+    { code: 'Vinicius', label: 'Vinicius (Saúde)' },
+    { code: 'Jayne_Janaina', label: 'Jayne/Janaina (Adm/financeiro)' },
+    { code: 'Leandro', label: 'Leandro (Jurídico)' },
+    { code: 'Izabel', label: 'Izabel (Comercial)' },
+    { code: 'Victoria', label: 'Victória (Estratégico)' },
+    { code: 'Adalberto_Vitor', label: 'Adalberto/Vitor (Diretoria)' },
+  ]);
+
+  // ─── Estado ───────────────────────────────────────────────
+
+  /**
+   * @typedef {Object} TreeBotao
+   * @property {string} id
+   * @property {string} rotulo
+   * @property {string} url
+   * @property {number} ordem
+   *
+   * @typedef {Object} TreeCategoria
+   * @property {string} id
+   * @property {string} titulo
+   * @property {number} ordem
+   * @property {boolean} sigilo_saude
+   * @property {TreeBotao[]} botoes
+   *
+   * @typedef {Object} TreeSetor
+   * @property {string} setor
+   * @property {TreeCategoria[]} categorias
+   *
+   * @typedef {Object} UserContext
+   * @property {string} email
+   * @property {string} nome
+   * @property {string[]} setores
+   * @property {?string} lideranca
+   * @property {?string} cargo_especial
+   * @property {boolean} eh_profissional_saude
+   * @property {boolean} eh_admin
+   *
+   * @typedef {Object} AppState
+   * @property {?string} idToken
+   * @property {?UserContext} user
+   * @property {TreeSetor[]} arvore
+   * @property {?string} setorAtivo
+   * @property {?string} categoriaAtiva
+   * @property {{mode: 'create'|'edit', tipo: 'categoria'|'botao', id: ?string}} adminForm
+   */
+
+  /** @type {AppState} */
+  const state = {
+    idToken: null,
+    user: null,
+    arvore: [],
+    setorAtivo: null,
+    categoriaAtiva: null,
+    adminForm: { mode: 'create', tipo: 'categoria', id: null },
+  };
+
+  // ─── Helpers DOM ──────────────────────────────────────────
+
+  /**
+   * @param {string} sel
+   * @returns {?HTMLElement}
+   */
+  const $ = (sel) => document.querySelector(sel);
+
+  /**
+   * Cria elemento com props e filhos.
+   * @param {string} tag
+   * @param {Object<string, *>=} props
+   * @param {Array<Node|string>=} children
+   * @returns {HTMLElement}
+   */
+  const el = (tag, props, children) => {
+    const node = document.createElement(tag);
+    if (props) {
+      Object.keys(props).forEach((k) => {
+        if (k === 'className') node.className = props[k];
+        else if (k === 'dataset' && props[k]) {
+          Object.keys(props[k]).forEach((dk) => { node.dataset[dk] = props[k][dk]; });
+        } else if (k.startsWith('on') && typeof props[k] === 'function') {
+          node.addEventListener(k.slice(2).toLowerCase(), props[k]);
+        } else if (k === 'text') node.textContent = props[k];
+        else node.setAttribute(k, props[k]);
+      });
+    }
+    if (children) {
+      children.forEach((c) => {
+        if (c === null || c === undefined) return;
+        node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+      });
+    }
+    return node;
+  };
+
+  // ─── Toast ────────────────────────────────────────────────
+
+  let toastTimeout = null;
+
+  /**
+   * @param {string} msg
+   * @param {'success'|'error'=} type
+   */
+  const toast = (msg, type) => {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const node = el('div', { className: `toast${type ? ` toast-${type}` : ''}`, text: msg });
+    document.body.appendChild(node);
+    requestAnimationFrame(() => node.classList.add('show'));
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      node.classList.remove('show');
+      setTimeout(() => node.remove(), 400);
+    }, 4000);
+  };
+
+  // ─── Tema ─────────────────────────────────────────────────
+
+  const setTheme = (theme) => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('theme', theme); } catch (_) { /* ignore */ }
+    const iconMoon = $('#iconMoon');
+    const iconSun = $('#iconSun');
+    if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'block' : 'none';
+    if (iconSun) iconSun.style.display = theme === 'light' ? 'block' : 'none';
+  };
+
+  const initTheme = () => {
+    let saved = 'dark';
+    try { saved = localStorage.getItem('theme') || 'dark'; } catch (_) { /* ignore */ }
+    setTheme(saved === 'light' ? 'light' : 'dark');
+    const toggle = $('#themeToggle');
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        setTheme(current === 'dark' ? 'light' : 'dark');
+      });
+    }
+  };
+
+  // ─── API: chamada ao Apps Script ──────────────────────────
+
+  /**
+   * @typedef {Object} ApiResult
+   * @property {boolean} ok
+   * @property {*=} data
+   * @property {string=} error
+   * @property {string=} code
+   */
+
+  /**
+   * POST text/plain (evita preflight CORS no Apps Script).
+   *
+   * @param {string} action
+   * @param {Object<string, *>=} payload
+   * @returns {Promise<ApiResult>}
+   */
+  const api = async (action, payload) => {
+    if (!state.idToken) return { ok: false, code: 'NO_TOKEN', error: 'Sessão expirada.' };
+    try {
+      const res = await fetch(CONFIG.APPS_SCRIPT_URL, {
+        method: 'POST',
+        // text/plain é proposital: dispara request "simples" sem preflight.
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, idToken: state.idToken, payload: payload || {} }),
+        redirect: 'follow',
+      });
+      const json = await res.json();
+      return json;
+    } catch (err) {
+      return { ok: false, code: 'NETWORK', error: 'Falha de rede.' };
+    }
+  };
+
+  // ─── Login ────────────────────────────────────────────────
+
+  /**
+   * @param {{credential: string}} response
+   */
+  const handleGoogleCredential = async (response) => {
+    const token = response && response.credential;
+    if (!token) {
+      showLoginError('Não foi possível obter token Google.');
+      return;
+    }
+    state.idToken = token;
+    try { sessionStorage.setItem('idToken', token); } catch (_) { /* ignore */ }
+    const result = await api('getTree');
+    if (!result.ok) {
+      state.idToken = null;
+      try { sessionStorage.removeItem('idToken'); } catch (_) { /* ignore */ }
+      showLoginError(result.error || 'Acesso negado.');
+      return;
+    }
+    bootApp(result.data);
+  };
+
+  const showLoginError = (msg) => {
+    const elErr = $('#loginError');
+    if (elErr) {
+      elErr.textContent = msg;
+      elErr.style.display = '';
+    }
+  };
+
+  const initGoogleSignIn = () => {
+    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+      setTimeout(initGoogleSignIn, 100);
+      return;
+    }
+    window.google.accounts.id.initialize({
+      client_id: CONFIG.GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+      auto_select: false,
+    });
+    const target = $('#googleSignIn');
+    if (target) {
+      window.google.accounts.id.renderButton(target, {
+        type: 'standard',
+        theme: 'filled_blue',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'pill',
+      });
+    }
+  };
+
+  const signOut = () => {
+    state.idToken = null;
+    state.user = null;
+    try { sessionStorage.removeItem('idToken'); } catch (_) { /* ignore */ }
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      window.google.accounts.id.disableAutoSelect();
+    }
+    location.reload();
+  };
+
+  // ─── Boot pós-login ───────────────────────────────────────
+
+  /**
+   * @param {{user: UserContext, arvore: TreeSetor[]}} tree
+   */
+  const bootApp = (tree) => {
+    state.user = tree.user;
+    state.arvore = tree.arvore || [];
+    $('#loginSection').style.display = 'none';
+    $('#appShell').style.display = '';
+    const userName = $('#userName');
+    if (userName) userName.textContent = state.user.nome || state.user.email;
+    const btnAdmin = $('#btnAdminToggle');
+    if (btnAdmin) btnAdmin.style.display = state.user.eh_admin ? '' : 'none';
+    renderSidebar();
+    renderEmpty();
+  };
+
+  // ─── Render: Sidebar ──────────────────────────────────────
+
+  const renderSidebar = () => {
+    const nav = $('#sectorNav');
+    if (!nav) return;
+    nav.innerHTML = '';
+    if (state.arvore.length === 0) {
+      const empty = el('p', { className: 'sidebar-user', text: 'Nenhum setor disponível.' });
+      nav.appendChild(empty);
+      return;
+    }
+    state.arvore.forEach((setorNode) => {
+      const label = SETORES.find((s) => s.code === setorNode.setor);
+      const btn = el('button', {
+        className: `sector-item${state.setorAtivo === setorNode.setor ? ' active' : ''}`,
+        type: 'button',
+        text: label ? label.label : setorNode.setor,
+        onclick: () => selectSetor(setorNode.setor),
+      });
+      nav.appendChild(btn);
+    });
+  };
+
+  // ─── Render: Conteúdo ─────────────────────────────────────
+
+  const renderEmpty = () => {
+    $('#contentArea').innerHTML = '';
+    $('#breadcrumb').innerHTML = '';
+    $('#emptyState').style.display = '';
+  };
+
+  /**
+   * @param {string} setor
+   */
+  const selectSetor = (setor) => {
+    state.setorAtivo = setor;
+    state.categoriaAtiva = null;
+    renderSidebar();
+    renderSetor();
+  };
+
+  const renderSetor = () => {
+    $('#emptyState').style.display = 'none';
+    const setorNode = state.arvore.find((s) => s.setor === state.setorAtivo);
+    if (!setorNode) {
+      renderEmpty();
+      return;
+    }
+    renderBreadcrumb([{ label: labelSetor(setorNode.setor) }]);
+    const area = $('#contentArea');
+    area.innerHTML = '';
+
+    if (setorNode.categorias.length === 0) {
+      area.appendChild(el('p', { className: 'content-empty', text: 'Nenhuma sub-pasta neste setor.' }));
+      return;
+    }
+    const grid = el('div', { className: 'cat-grid' });
+    setorNode.categorias.forEach((cat) => {
+      const card = el('button', {
+        className: 'cat-card',
+        type: 'button',
+        onclick: () => selectCategoria(cat.id),
+      }, [
+        el('span', { className: 'cat-card-title', text: cat.titulo }),
+        el('span', { className: 'cat-card-meta', text: `${cat.botoes.length} item(ns)` }),
+        cat.sigilo_saude ? el('span', { className: 'cat-card-sigilo', text: '🔒 Sigilo de saúde' }) : null,
+      ]);
+      grid.appendChild(card);
+    });
+    area.appendChild(grid);
+
+    if (state.user.eh_admin && canUserManage(setorNode.setor)) {
+      area.appendChild(renderAdminActions('categoria-list'));
+    }
+  };
+
+  /**
+   * @param {string} catId
+   */
+  const selectCategoria = (catId) => {
+    state.categoriaAtiva = catId;
+    renderCategoria();
+  };
+
+  const renderCategoria = () => {
+    const setorNode = state.arvore.find((s) => s.setor === state.setorAtivo);
+    if (!setorNode) return renderEmpty();
+    const cat = setorNode.categorias.find((c) => c.id === state.categoriaAtiva);
+    if (!cat) return renderSetor();
+
+    renderBreadcrumb([
+      { label: labelSetor(setorNode.setor), onclick: () => selectSetor(setorNode.setor) },
+      { label: cat.titulo },
+    ]);
+
+    const area = $('#contentArea');
+    area.innerHTML = '';
+
+    if (cat.botoes.length === 0) {
+      area.appendChild(el('p', { className: 'content-empty', text: 'Nenhum link cadastrado nesta sub-pasta.' }));
+    } else {
+      const grid = el('div', { className: 'btn-grid' });
+      cat.botoes.forEach((b) => {
+        const card = el('a', {
+          className: 'btn-card',
+          href: b.url,
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        }, [
+          el('span', { text: b.rotulo }),
+          el('span', { className: 'btn-card-arrow', text: '↗' }),
+        ]);
+        if (state.user.eh_admin && canUserManage(setorNode.setor)) {
+          const actions = el('div', { className: 'btn-card-actions' }, [
+            el('button', {
+              className: 'btn-tiny', type: 'button', text: 'Editar',
+              onclick: (e) => { e.preventDefault(); openAdminEdit('botao', b.id); },
+            }),
+            el('button', {
+              className: 'btn-tiny btn-tiny-danger', type: 'button', text: 'Excluir',
+              onclick: (e) => { e.preventDefault(); confirmAndDelete('botao', b.id, b.rotulo); },
+            }),
+          ]);
+          const wrapper = el('div', {}, [card, actions]);
+          grid.appendChild(wrapper);
+        } else {
+          grid.appendChild(card);
+        }
+      });
+      area.appendChild(grid);
+    }
+
+    if (state.user.eh_admin && canUserManage(setorNode.setor)) {
+      const cur = setorNode.categorias.find((c) => c.id === state.categoriaAtiva);
+      area.appendChild(renderAdminActions('botao-list', cur));
+    }
+  };
+
+  /**
+   * @param {string} setor
+   * @returns {string}
+   */
+  const labelSetor = (setor) => {
+    const s = SETORES.find((x) => x.code === setor);
+    return s ? s.label : setor;
+  };
+
+  /**
+   * @param {string} setor
+   * @returns {boolean}
+   */
+  const canUserManage = (setor) => {
+    if (!state.user || !state.user.eh_admin) return false;
+    if (state.user.setores.indexOf('Diretoria') >= 0) return true;
+    return state.user.setores.indexOf(setor) >= 0;
+  };
+
+  /**
+   * @param {Array<{label: string, onclick?: Function}>} items
+   */
+  const renderBreadcrumb = (items) => {
+    const bc = $('#breadcrumb');
+    bc.innerHTML = '';
+    items.forEach((it, idx) => {
+      const isLast = idx === items.length - 1;
+      if (isLast) {
+        bc.appendChild(el('span', { className: 'breadcrumb-current', text: it.label }));
+      } else {
+        bc.appendChild(el('button', {
+          className: 'breadcrumb-link', type: 'button', text: it.label,
+          onclick: it.onclick,
+        }));
+        bc.appendChild(el('span', { className: 'breadcrumb-sep', text: '/' }));
+      }
+    });
+  };
+
+  /**
+   * Renderiza ações de admin in-place.
+   * @param {'categoria-list'|'botao-list'} ctx
+   * @param {?TreeCategoria=} _cat
+   * @returns {HTMLElement}
+   */
+  const renderAdminActions = (ctx, _cat) => {
+    const wrap = el('div', { className: 'btn-card-actions', style: 'margin-top:1.25rem' });
+    if (ctx === 'categoria-list') {
+      wrap.appendChild(el('button', {
+        className: 'btn-tiny', type: 'button', text: '+ Nova sub-pasta',
+        onclick: () => openAdminCreate('categoria'),
+      }));
+    } else {
+      wrap.appendChild(el('button', {
+        className: 'btn-tiny', type: 'button', text: '+ Novo link',
+        onclick: () => openAdminCreate('botao'),
+      }));
+    }
+    return wrap;
+  };
+
+  // ─── Admin: formulário ────────────────────────────────────
+
+  const openAdminCreate = (tipo) => {
+    state.adminForm = { mode: 'create', tipo, id: null };
+    $('#adminTitle').textContent = tipo === 'categoria' ? 'Nova sub-pasta' : 'Novo link';
+    populateAdminForm(null);
+    setupAdminFormUI();
+    $('#adminOverlay').style.display = '';
+  };
+
+  /**
+   * @param {'categoria'|'botao'} tipo
+   * @param {string} id
+   */
+  const openAdminEdit = (tipo, id) => {
+    state.adminForm = { mode: 'edit', tipo, id };
+    $('#adminTitle').textContent = tipo === 'categoria' ? 'Editar sub-pasta' : 'Editar link';
+    const data = findItemForEdit(tipo, id);
+    populateAdminForm(data);
+    setupAdminFormUI();
+    $('#adminOverlay').style.display = '';
+  };
+
+  /**
+   * Busca dados locais para edição. Limitado ao que está na árvore
+   * filtrada — se o item não estiver visível, abrir-se-á em branco
+   * (não cria risco de elevação, pois o backend revalida).
+   *
+   * @param {'categoria'|'botao'} tipo
+   * @param {string} id
+   * @returns {?Object<string, *>}
+   */
+  const findItemForEdit = (tipo, id) => {
+    for (let i = 0; i < state.arvore.length; i += 1) {
+      const s = state.arvore[i];
+      for (let j = 0; j < s.categorias.length; j += 1) {
+        const c = s.categorias[j];
+        if (tipo === 'categoria' && c.id === id) {
+          return { setor: s.setor, titulo: c.titulo, ordem: c.ordem };
+        }
+        if (tipo === 'botao') {
+          const b = c.botoes.find((bt) => bt.id === id);
+          if (b) {
+            return {
+              setor: s.setor,
+              categoria_id: c.id,
+              rotulo: b.rotulo,
+              url: b.url,
+              ordem: b.ordem,
+            };
+          }
+        }
+      }
+    }
+    return null;
+  };
+
+  /**
+   * @param {?Object<string, *>} data
+   */
+  const populateAdminForm = (data) => {
+    // Setores select
+    const fSetor = $('#fSetor');
+    fSetor.innerHTML = '';
+    const editableSetores = state.user.setores.indexOf('Diretoria') >= 0
+      ? SETORES.map((s) => s.code)
+      : state.user.setores;
+    SETORES.forEach((s) => {
+      if (editableSetores.indexOf(s.code) < 0) return;
+      const opt = el('option', { value: s.code, text: s.label });
+      if (data && data.setor === s.code) opt.setAttribute('selected', 'true');
+      else if (!data && s.code === state.setorAtivo) opt.setAttribute('selected', 'true');
+      fSetor.appendChild(opt);
+    });
+
+    // Categorias (para tipo botão)
+    const fCat = $('#fCategoria');
+    fCat.innerHTML = '';
+    const setorSelecionado = fSetor.value;
+    const sNode = state.arvore.find((x) => x.setor === setorSelecionado);
+    if (sNode) {
+      sNode.categorias.forEach((c) => {
+        const opt = el('option', { value: c.id, text: c.titulo });
+        if (data && data.categoria_id === c.id) opt.setAttribute('selected', 'true');
+        else if (!data && state.categoriaAtiva === c.id) opt.setAttribute('selected', 'true');
+        fCat.appendChild(opt);
+      });
+    }
+
+    $('#fTitulo').value = data ? (data.titulo || data.rotulo || '') : '';
+    $('#fUrl').value = data && data.url ? data.url : '';
+    $('#fOrdem').value = data && typeof data.ordem === 'number' ? data.ordem : 0;
+
+    // Permissões — fresh defaults; em edit, dados completos não estão no
+    // tree (que é projeção mínima por segurança). Edit pré-preenche apenas
+    // os campos disponíveis; permissões ficam vazias e o admin re-define.
+    $('#fTodosSetores').checked = false;
+    $('#fTodasLiderancas').checked = false;
+    $('#fVerPO').checked = false;
+    $('#fVerAnalista').checked = false;
+    $('#fSigilo').checked = false;
+
+    // Setores list
+    const setoresList = $('#fSetoresList');
+    setoresList.innerHTML = '';
+    SETORES.forEach((s) => {
+      const lbl = el('label', { className: 'check-item' }, [
+        el('input', { type: 'checkbox', value: s.code, name: 'perm-setor' }),
+        el('span', { text: s.label }),
+      ]);
+      setoresList.appendChild(lbl);
+    });
+
+    // Lideranças list
+    const lidList = $('#fLiderancasList');
+    lidList.innerHTML = '';
+    LIDERANCAS.forEach((l) => {
+      const lbl = el('label', { className: 'check-item' }, [
+        el('input', { type: 'checkbox', value: l.code, name: 'perm-lid' }),
+        el('span', { text: l.label }),
+      ]);
+      lidList.appendChild(lbl);
+    });
+  };
+
+  /**
+   * Aplica UI condicional ao tipo selecionado.
+   */
+  const setupAdminFormUI = () => {
+    const tipo = state.adminForm.tipo;
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.tipo === tipo);
+    });
+    $('#fCategoriaWrap').style.display = tipo === 'botao' ? '' : 'none';
+    $('#fUrlWrap').style.display = tipo === 'botao' ? '' : 'none';
+    $('#fTituloLabel').textContent = tipo === 'categoria' ? 'Título da sub-pasta' : 'Rótulo do botão';
+
+    // Sigilo de saúde — só aparece para admin do setor Saúde que seja prof. saúde.
+    const showSigilo = state.user
+      && state.user.eh_admin
+      && state.user.eh_profissional_saude
+      && (
+        state.user.setores.indexOf('Saude') >= 0
+        || state.user.setores.indexOf('Diretoria') >= 0
+      );
+    $('#fSigiloWrap').style.display = showSigilo ? '' : 'none';
+
+    $('#adminError').textContent = '';
+  };
+
+  /**
+   * Coleta dados do formulário.
+   * @returns {Object<string, *>}
+   */
+  const collectAdminForm = () => {
+    /** @type {Object<string, *>} */
+    const payload = {
+      ordem: parseInt($('#fOrdem').value, 10) || 0,
+      todos_setores: $('#fTodosSetores').checked,
+      todas_liderancas: $('#fTodasLiderancas').checked,
+      ver_po: $('#fVerPO').checked,
+      ver_analista_dados: $('#fVerAnalista').checked,
+      sigilo_saude: $('#fSigilo').checked && $('#fSigiloWrap').style.display !== 'none',
+    };
+    payload.setores = Array.from(document.querySelectorAll('input[name="perm-setor"]:checked'))
+      .map((i) => i.value);
+    payload.liderancas = Array.from(document.querySelectorAll('input[name="perm-lid"]:checked'))
+      .map((i) => i.value);
+
+    if (state.adminForm.tipo === 'categoria') {
+      payload.setor = $('#fSetor').value;
+      payload.titulo = $('#fTitulo').value.trim();
+    } else {
+      payload.categoria_id = $('#fCategoria').value;
+      payload.rotulo = $('#fTitulo').value.trim();
+      payload.url = $('#fUrl').value.trim();
+    }
+    if (state.adminForm.mode === 'edit' && state.adminForm.id) {
+      payload.id = state.adminForm.id;
+    }
+    return payload;
+  };
+
+  const submitAdminForm = async (ev) => {
+    ev.preventDefault();
+    const submitBtn = $('#adminSubmit');
+    const txt = submitBtn.querySelector('.btn-text');
+    const ld = submitBtn.querySelector('.btn-loader');
+    txt.style.display = 'none';
+    ld.style.display = 'inline-flex';
+    submitBtn.disabled = true;
+    $('#adminError').textContent = '';
+
+    try {
+      const payload = collectAdminForm();
+      const { tipo, mode } = state.adminForm;
+      let action;
+      if (tipo === 'categoria') action = mode === 'create' ? 'createCategoria' : 'updateCategoria';
+      else action = mode === 'create' ? 'createBotao' : 'updateBotao';
+
+      const result = await api(action, payload);
+      if (!result.ok) {
+        $('#adminError').textContent = mapError(result);
+        return;
+      }
+      toast('Salvo com sucesso.', 'success');
+      closeAdminModal();
+      await refreshTree();
+    } finally {
+      txt.style.display = '';
+      ld.style.display = 'none';
+      submitBtn.disabled = false;
+    }
+  };
+
+  const closeAdminModal = () => {
+    $('#adminOverlay').style.display = 'none';
+  };
+
+  /**
+   * @param {'categoria'|'botao'} tipo
+   * @param {string} id
+   * @param {string} label
+   */
+  const confirmAndDelete = (tipo, id, label) => {
+    const overlay = $('#confirmOverlay');
+    $('#confirmTitle').textContent = 'Excluir?';
+    $('#confirmText').textContent = `Tem certeza de que deseja excluir "${label}"? Essa ação não pode ser desfeita.`;
+    overlay.style.display = '';
+
+    const ok = $('#confirmOk');
+    const cancel = $('#confirmCancel');
+
+    const cleanup = () => {
+      overlay.style.display = 'none';
+      ok.replaceWith(ok.cloneNode(true));
+      cancel.replaceWith(cancel.cloneNode(true));
+    };
+
+    $('#confirmOk').onclick = async () => {
+      cleanup();
+      const action = tipo === 'categoria' ? 'deleteCategoria' : 'deleteBotao';
+      const result = await api(action, { id });
+      if (!result.ok) {
+        toast(mapError(result), 'error');
+        return;
+      }
+      toast('Excluído.', 'success');
+      await refreshTree();
+    };
+    $('#confirmCancel').onclick = cleanup;
+  };
+
+  const refreshTree = async () => {
+    const result = await api('getTree');
+    if (!result.ok) {
+      toast(mapError(result), 'error');
+      return;
+    }
+    state.arvore = (result.data && result.data.arvore) || [];
+    renderSidebar();
+    if (state.setorAtivo && state.categoriaAtiva) {
+      renderCategoria();
+    } else if (state.setorAtivo) {
+      renderSetor();
+    } else {
+      renderEmpty();
+    }
+  };
+
+  /**
+   * @param {ApiResult} result
+   * @returns {string}
+   */
+  const mapError = (result) => {
+    if (!result) return 'Erro desconhecido.';
+    if (result.code === 'FORBIDDEN') return 'Você não tem permissão para esta operação.';
+    if (result.code === 'NETWORK') return 'Falha de rede. Tente novamente.';
+    if (result.code === 'USER_NOT_FOUND') return 'Usuário não cadastrado.';
+    if (result.code === 'USER_INACTIVE') return 'Usuário inativo.';
+    if (result.error && /^VALIDATION:/.test(result.error)) {
+      return result.error.replace(/^VALIDATION:/, '');
+    }
+    return result.error || 'Erro ao processar.';
+  };
+
+  // ─── Inicialização ────────────────────────────────────────
+
+  const init = () => {
+    const yearEl = $('#yearFooter');
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+    initTheme();
+
+    // Tenta retomar sessão.
+    let saved = null;
+    try { saved = sessionStorage.getItem('idToken'); } catch (_) { /* ignore */ }
+    if (saved) {
+      state.idToken = saved;
+      api('getTree').then((result) => {
+        if (result.ok) {
+          bootApp(result.data);
+        } else {
+          state.idToken = null;
+          try { sessionStorage.removeItem('idToken'); } catch (_) { /* ignore */ }
+          showLoginUI();
+        }
+      });
+    } else {
+      showLoginUI();
+    }
+
+    // Eventos
+    $('#btnSignOut').addEventListener('click', signOut);
+    $('#btnAdminToggle').addEventListener('click', () => openAdminCreate('categoria'));
+    $('#adminCancel').addEventListener('click', closeAdminModal);
+    $('#adminForm').addEventListener('submit', submitAdminForm);
+    $('#adminOverlay').addEventListener('click', (e) => {
+      if (e.target === $('#adminOverlay')) closeAdminModal();
+    });
+    document.querySelectorAll('.tab-btn').forEach((b) => {
+      b.addEventListener('click', () => {
+        state.adminForm.tipo = b.dataset.tipo;
+        setupAdminFormUI();
+      });
+    });
+    // Re-popula categorias quando setor muda no form
+    $('#fSetor').addEventListener('change', () => {
+      const setor = $('#fSetor').value;
+      const sNode = state.arvore.find((x) => x.setor === setor);
+      const fCat = $('#fCategoria');
+      fCat.innerHTML = '';
+      if (sNode) {
+        sNode.categorias.forEach((c) => {
+          fCat.appendChild(el('option', { value: c.id, text: c.titulo }));
+        });
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAdminModal();
+        $('#confirmOverlay').style.display = 'none';
+      }
+    });
+  };
+
+  const showLoginUI = () => {
+    $('#loginSection').style.display = '';
+    initGoogleSignIn();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
-  .sidebar {
-    position: relative;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border);
-  }
-  .sector-nav {
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 0.5rem 0.75rem;
-  }
-  .sector-item {
-    flex-shrink: 0;
-    width: auto;
-  }
-  .sidebar-footer { display: none; }
-  .content { padding: 1.25rem 1rem 3rem; }
-}
-
-@media (max-width: 480px) {
-  .modal-card { padding: 1.25rem 1rem; }
-  .check-grid { grid-template-columns: 1fr; }
-}
+})();
