@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Intranet</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Nunito+Sans:wght@400;600&display=swap" />
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <!-- ─── Toggle de tema ─── -->
+  <button id="themeToggle" class="theme-toggle" aria-label="Alternar tema">
+    <svg id="iconMoon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+    <svg id="iconSun" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  </button>
+
+  <!-- ─── Tela de Login ─── -->
+  <section id="loginSection" class="login-shell" style="display:none">
+    <div class="login-card">
+      <h1 class="login-title">Intranet</h1>
+      <p class="login-sub">Entre com sua conta corporativa Google para continuar.</p>
+      <div id="googleSignIn" class="login-google"></div>
+      <p id="loginError" class="login-error" style="display:none"></p>
+    </div>
+  </section>
+
+  <!-- ─── App Shell ─── -->
+  <main id="appShell" class="app-shell" style="display:none">
+
+    <!-- ── Sidebar de setores ── -->
+    <aside id="sidebar" class="sidebar" aria-label="Navegação por setor">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Intranet</h2>
+        <p id="userName" class="sidebar-user"></p>
+      </div>
+      <nav id="sectorNav" class="sector-nav"></nav>
+      <div class="sidebar-footer">
+        <button id="btnSignOut" class="btn btn-outline btn-sm">Sair</button>
+      </div>
+    </aside>
+
+    <!-- ── Conteúdo principal ── -->
+    <section class="content">
+      <header class="content-header">
+        <nav id="breadcrumb" class="breadcrumb" aria-label="Caminho"></nav>
+        <button id="btnAdminToggle" class="btn btn-outline btn-sm" style="display:none">
+          + Novo conteúdo
+        </button>
+      </header>
+
+      <div id="contentArea" class="content-area"></div>
+
+      <div id="emptyState" class="content-empty" style="display:none">
+        <p>Selecione um setor à esquerda para começar.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── Modal de admin (criar/editar) ─── -->
+  <div id="adminOverlay" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
+    <div class="modal-card admin-modal">
+      <h3 id="adminTitle" class="modal-title">Novo conteúdo</h3>
+      <form id="adminForm" class="admin-form" novalidate>
+        <!-- Tipo -->
+        <div class="field-group">
+          <label class="field-label">Tipo</label>
+          <div class="tab-toggle">
+            <button type="button" class="tab-btn active" data-tipo="categoria">Sub-pasta</button>
+            <button type="button" class="tab-btn" data-tipo="botao">Link/Botão</button>
+          </div>
+        </div>
+
+        <!-- Setor -->
+        <div class="field-group">
+          <label class="field-label" for="fSetor">Setor</label>
+          <select id="fSetor" class="field-input" required></select>
+        </div>
+
+        <!-- Categoria pai (apenas para botão) -->
+        <div class="field-group" id="fCategoriaWrap" style="display:none">
+          <label class="field-label" for="fCategoria">Sub-pasta</label>
+          <select id="fCategoria" class="field-input"></select>
+        </div>
+
+        <!-- Título / Rótulo -->
+        <div class="field-group">
+          <label class="field-label" for="fTitulo" id="fTituloLabel">Título</label>
+          <input id="fTitulo" type="text" class="field-input" required maxlength="120" />
+        </div>
+
+        <!-- URL (apenas para botão) -->
+        <div class="field-group" id="fUrlWrap" style="display:none">
+          <label class="field-label" for="fUrl">URL</label>
+          <input id="fUrl" type="url" class="field-input" placeholder="https://..." />
+        </div>
+
+        <!-- Ordem -->
+        <div class="field-group">
+          <label class="field-label" for="fOrdem">Ordem</label>
+          <input id="fOrdem" type="number" class="field-input" value="0" min="0" />
+        </div>
+
+        <!-- Permissões: Setores -->
+        <fieldset class="field-group permissions-group">
+          <legend class="field-label">Quem poderá ver?</legend>
+          <label class="check-item">
+            <input id="fTodosSetores" type="checkbox" />
+            <span>Todos setores</span>
+          </label>
+          <div id="fSetoresList" class="check-grid"></div>
+        </fieldset>
+
+        <!-- Permissões: Lideranças -->
+        <fieldset class="field-group permissions-group">
+          <legend class="field-label">Quais lideranças podem visualizar?</legend>
+          <label class="check-item">
+            <input id="fTodasLiderancas" type="checkbox" />
+            <span>Todas lideranças</span>
+          </label>
+          <div id="fLiderancasList" class="check-grid"></div>
+        </fieldset>
+
+        <!-- Permissões: Cargos especiais -->
+        <fieldset class="field-group permissions-group">
+          <legend class="field-label">O PO ou Analista de dados poderá visualizar?</legend>
+          <label class="check-item">
+            <input id="fVerPO" type="checkbox" />
+            <span>Product Owner (Henrique)</span>
+          </label>
+          <label class="check-item">
+            <input id="fVerAnalista" type="checkbox" />
+            <span>Analista de dados (Marlon)</span>
+          </label>
+        </fieldset>
+
+        <!-- Sigilo de saúde (condicional) -->
+        <fieldset class="field-group permissions-group" id="fSigiloWrap" style="display:none">
+          <legend class="field-label">Este conteúdo só pode ser visto por profissionais de saúde?</legend>
+          <label class="check-item check-item-sigilo">
+            <input id="fSigilo" type="checkbox" />
+            <span>Sim, conteúdo com sigilo</span>
+          </label>
+          <p class="field-hint">
+            Marcando esta opção, nem a Diretoria terá acesso — apenas profissionais de saúde.
+          </p>
+        </fieldset>
+
+        <p id="adminError" class="field-error" aria-live="polite"></p>
+
+        <div class="modal-actions">
+          <button type="button" id="adminCancel" class="btn btn-outline btn-sm">Cancelar</button>
+          <button type="submit" id="adminSubmit" class="btn btn-primary btn-sm">
+            <span class="btn-text">Salvar</span>
+            <span class="btn-loader" style="display:none"><span class="spinner"></span> Salvando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── Modal de confirmação genérico ─── -->
+  <div id="confirmOverlay" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h3 id="confirmTitle" class="modal-title">Confirmar</h3>
+      <p id="confirmText" class="modal-text"></p>
+      <div class="modal-actions">
+        <button id="confirmCancel" class="btn btn-outline btn-sm">Cancelar</button>
+        <button id="confirmOk" class="btn btn-danger btn-sm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span id="yearFooter"></span> · Intranet
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
