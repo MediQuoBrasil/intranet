@@ -58,18 +58,18 @@
   --color-bg:           #f4f0fa;
   --color-surface:      #ffffff;
   --color-surface-2:    #f0ecf7;
-  --color-border:       rgba(73, 30, 156, 0.12);
-  --color-border-hover: rgba(73, 30, 156, 0.3);
-  --color-primary-glow: rgba(73, 30, 156, 0.06);
+  --color-border:       rgba(73, 30, 156, 0.22);
+  --color-border-hover: rgba(73, 30, 156, 0.45);
+  --color-primary-glow: rgba(73, 30, 156, 0.08);
   --color-text:         #1c1230;
-  --color-text-muted:   #5e5077;
-  --color-text-dim:     #8a7da3;
+  --color-text-muted:   #4a3e63;
+  --color-text-dim:     #6b5e87;
   --color-danger-soft:  rgba(229, 69, 96, 0.08);
   --color-success-soft: rgba(52, 211, 153, 0.10);
   --color-input-bg:     #f8f5ff;
-  --color-input-border: #d4cce6;
-  --shadow-sm:          0 1px 3px rgba(73, 30, 156, 0.06);
-  --shadow-md:          0 4px 20px rgba(73, 30, 156, 0.08);
+  --color-input-border: #b8aad4;
+  --shadow-sm:          0 1px 3px rgba(73, 30, 156, 0.08);
+  --shadow-md:          0 4px 20px rgba(73, 30, 156, 0.10);
   --shadow-glow:        0 0 40px rgba(73, 30, 156, 0.05);
 }
 
@@ -101,37 +101,45 @@ body::before {
   z-index: 0;
 }
 
-/* ─── Toggle de tema ──────────────────────────────────────── */
+/* ─── Toggle de tema (no fluxo, sem position:fixed global) ── */
 
 .theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 100;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text-muted);
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.25s ease;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .theme-toggle:hover {
   border-color: var(--color-primary);
   color: var(--color-primary-soft);
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
-.theme-icon {
-  width: 18px;
-  height: 18px;
+.theme-toggle-corner {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
 }
+
+/* Visibilidade dos ícones controlada por tema — sem mexer no JS. */
+.theme-icon {
+  width: 16px;
+  height: 16px;
+  display: none;
+}
+
+[data-theme="dark"]  .theme-icon-moon { display: block; }
+[data-theme="light"] .theme-icon-sun  { display: block; }
 
 /* ─── Tela de Login ───────────────────────────────────────── */
 
@@ -146,6 +154,7 @@ body::before {
 }
 
 .login-card {
+  position: relative;            /* ancora o .theme-toggle-corner */
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -211,6 +220,13 @@ body::before {
   border-bottom: 1px solid var(--color-border);
 }
 
+.sidebar-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .sidebar-title {
   font-family: var(--font-display);
   font-size: 1.25rem;
@@ -225,7 +241,7 @@ body::before {
 .sidebar-user {
   font-size: 0.82rem;
   color: var(--color-text-muted);
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   word-break: break-word;
 }
 
@@ -587,16 +603,33 @@ body::before {
   line-height: 1.4;
 }
 
+/* ─── Permissões (substitui fieldset/legend) ──────────────── */
+
 .permissions-group {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.1rem 0.9rem;
   background: var(--color-surface-2);
 }
 
-.permissions-group .field-label {
+.permissions-title {
   font-size: 0.84rem;
-  margin-bottom: 0.55rem;
+  margin: 0 0 0.8rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.check-item-master {
+  font-weight: 700;
+  font-family: var(--font-display);
+  margin-bottom: 0.65rem;
+}
+
+.check-item-master + .check-grid {
+  padding-top: 0.55rem;
+  border-top: 1px dashed var(--color-border);
 }
 
 .check-grid {
