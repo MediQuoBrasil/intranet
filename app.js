@@ -9,8 +9,11 @@
  *      (evita preflight CORS)
  *    - Renderização segura da árvore (textContent, sem innerHTML
  *      com dado dinâmico)
- *    - Tema escuro/claro persistente
+ *    - Tema escuro/claro persistente (visibilidade dos ícones
+ *      controlada por CSS via [data-theme])
  *    - Modal de criação/edição de Categoria e Botão
+ *    - Sincronia visual master ↔ filhos nos checkboxes de
+ *      permissões (event delegation, instalada uma única vez)
  *
  *  Segurança:
  *    - Nenhuma decisão de autorização é tomada no cliente.
@@ -172,26 +175,137 @@
 
   // ─── Tema ─────────────────────────────────────────────────
 
+  /**
+   * Aplica tema persistindo a escolha. Visibilidade dos ícones é
+   * controlada por CSS via `[data-theme]` — não precisa mexer em SVG aqui.
+   *
+   * @param {'dark'|'light'} theme
+   * @returns {void}
+   */
   const setTheme = (theme) => {
     document.documentElement.setAttribute('data-theme', theme);
     try { localStorage.setItem('theme', theme); } catch (_) { /* ignore */ }
-    const iconMoon = $('#iconMoon');
-    const iconSun = $('#iconSun');
-    if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'block' : 'none';
-    if (iconSun) iconSun.style.display = theme === 'light' ? 'block' : 'none';
   };
 
+  /**
+   * Lê o tema persistido e instala listeners em todos os botões
+   * `.theme-toggle` (tela de login e sidebar).
+   *
+   * @returns {void}
+   */
   const initTheme = () => {
     let saved = 'dark';
     try { saved = localStorage.getItem('theme') || 'dark'; } catch (_) { /* ignore */ }
     setTheme(saved === 'light' ? 'light' : 'dark');
-    const toggle = $('#themeToggle');
-    if (toggle) {
-      toggle.addEventListener('click', () => {
+    document.querySelectorAll('.theme-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme') || 'dark';
         setTheme(current === 'dark' ? 'light' : 'dark');
       });
+    });
+  };
+
+  // ─── Sync de permissões: master ↔ filhos ──────────────────
+
+  /**
+   * Verifica se todos os checkboxes filhos de um container estão marcados.
+   *
+   * @param {HTMLElement} container
+   * @returns {boolean}
+   */
+  const allChildrenChecked = (container) => {
+    if (!container) return false;
+    const inputs = container.querySelectorAll('input[type="checkbox"]');
+    if (inputs.length === 0) return false;
+    for (let i = 0; i < inputs.length; i += 1) {
+      if (!inputs[i].checked) return false;
     }
+    return true;
+  };
+
+  /**
+   * Marca/desmarca todos os checkboxes filhos de um container.
+   *
+   * @param {HTMLElement} container
+   * @param {boolean} checked
+   * @returns {void}
+   */
+  const setAllChildren = (container, checked) => {
+    if (!container) return;
+    container.querySelectorAll('input[type="checkbox"]').forEach((inp) => {
+      inp.checked = checked;
+    });
+  };
+
+  /**
+   * Instala uma única vez os listeners de sincronia master ↔ filhos.
+   * Os filhos são recriados em `populateAdminForm`; a delegação no
+   * container persistente garante que os handlers nunca se duplicam.
+   *
+   * Regras:
+   *  - "Todos setores" marca/desmarca todos os setores + PO + Analista.
+   *  - "Todos setores" só fica `true` quando setores, PO e Analista
+   *    estiverem todos marcados.
+   *  - "Todas lideranças" marca/desmarca todas as lideranças e
+   *    espelha o estado quando qualquer filho muda.
+   *
+   * @returns {void}
+   */
+  const setupPermissionsSync = () => {
+    const masterSetores = $('#fTodosSetores');
+    const masterLid = $('#fTodasLiderancas');
+    const setoresList = $('#fSetoresList');
+    const lidList = $('#fLiderancasList');
+    const verPO = $('#fVerPO');
+    const verAnalista = $('#fVerAnalista');
+
+    /**
+     * Sincroniza o master de setores com base em setores + PO + Analista.
+     * @returns {void}
+     */
+    const syncMasterSetores = () => {
+      if (!masterSetores) return;
+      masterSetores.checked = allChildrenChecked(setoresList)
+        && verPO.checked
+        && verAnalista.checked;
+    };
+
+    /**
+     * Sincroniza o master de lideranças.
+     * @returns {void}
+     */
+    const syncMasterLid = () => {
+      if (!masterLid) return;
+      masterLid.checked = allChildrenChecked(lidList);
+    };
+
+    if (masterSetores) {
+      masterSetores.addEventListener('change', () => {
+        const v = masterSetores.checked;
+        setAllChildren(setoresList, v);
+        verPO.checked = v;
+        verAnalista.checked = v;
+      });
+    }
+    if (masterLid) {
+      masterLid.addEventListener('change', () => {
+        setAllChildren(lidList, masterLid.checked);
+      });
+    }
+    if (setoresList) {
+      setoresList.addEventListener('change', (e) => {
+        const target = /** @type {HTMLInputElement} */ (e.target);
+        if (target && target.matches('input[type="checkbox"]')) syncMasterSetores();
+      });
+    }
+    if (lidList) {
+      lidList.addEventListener('change', (e) => {
+        const target = /** @type {HTMLInputElement} */ (e.target);
+        if (target && target.matches('input[type="checkbox"]')) syncMasterLid();
+      });
+    }
+    if (verPO) verPO.addEventListener('change', syncMasterSetores);
+    if (verAnalista) verAnalista.addEventListener('change', syncMasterSetores);
   };
 
   // ─── API: chamada ao Apps Script ──────────────────────────
@@ -801,6 +915,7 @@
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
     initTheme();
+    setupPermissionsSync();
 
     // Tenta retomar sessão.
     let saved = null;
